@@ -1,0 +1,1160 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>实习岗位 Demo 工作流生成器</title>
+  <style>
+    :root {
+      --bg: #f7f8fa;
+      --panel: #ffffff;
+      --ink: #17202a;
+      --muted: #667085;
+      --line: #d9dee7;
+      --accent: #0f766e;
+      --accent-2: #b45309;
+      --accent-3: #2563eb;
+      --soft: #e6f4f1;
+      --warn: #fff4df;
+      --blue-soft: #eaf1ff;
+      --shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+    }
+
+    .app {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: minmax(360px, 440px) 1fr;
+    }
+
+    .sidebar {
+      background: var(--panel);
+      border-right: 1px solid var(--line);
+      padding: 24px;
+      overflow: auto;
+      max-height: 100vh;
+    }
+
+    .main {
+      padding: 24px;
+      overflow: auto;
+      max-height: 100vh;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--accent), #14b8a6);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      font-size: 20px;
+      margin-bottom: 4px;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+      margin-bottom: 0;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      margin: 16px 0 8px;
+    }
+
+    textarea,
+    input,
+    select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      padding: 10px 12px;
+      outline: none;
+      min-height: 42px;
+    }
+
+    textarea:focus,
+    input:focus,
+    select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.12);
+    }
+
+    textarea {
+      min-height: 128px;
+      resize: vertical;
+      line-height: 1.55;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 18px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border: 1px solid transparent;
+      border-radius: 8px;
+      background: var(--accent);
+      color: #fff;
+      min-height: 42px;
+      padding: 0 14px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .btn.secondary {
+      background: #fff;
+      color: var(--ink);
+      border-color: var(--line);
+    }
+
+    .btn:hover {
+      filter: brightness(0.96);
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .toolbar h2 {
+      margin-bottom: 4px;
+      font-size: 22px;
+      letter-spacing: 0;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 16px;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .span-4 {
+      grid-column: span 4;
+    }
+
+    .span-6 {
+      grid-column: span 6;
+    }
+
+    .span-8 {
+      grid-column: span 8;
+    }
+
+    .span-12 {
+      grid-column: span 12;
+    }
+
+    .card h3 {
+      font-size: 15px;
+      margin-bottom: 12px;
+      letter-spacing: 0;
+    }
+
+    .pill-list,
+    .steps,
+    .plain-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 0;
+      margin: 0;
+      list-style: none;
+    }
+
+    .pill-list li {
+      background: var(--soft);
+      color: #0b5f59;
+      border: 1px solid #bce4dc;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .plain-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .plain-list li,
+    .steps li {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px 12px;
+      background: #fff;
+      line-height: 1.55;
+    }
+
+    .steps {
+      display: grid;
+    }
+
+    .kpi {
+      display: grid;
+      gap: 6px;
+    }
+
+    .kpi strong {
+      font-size: 24px;
+    }
+
+    .kpi span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .highlight {
+      background: var(--warn);
+      border-color: #f2d49b;
+    }
+
+    .blue {
+      background: var(--blue-soft);
+      border-color: #c7d8ff;
+    }
+
+    pre {
+      white-space: pre-wrap;
+      word-break: break-word;
+      margin: 0;
+      line-height: 1.6;
+      color: #233143;
+      font-size: 13px;
+    }
+
+    .empty {
+      min-height: 70vh;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      color: var(--muted);
+      padding: 48px;
+    }
+
+    .empty strong {
+      display: block;
+      color: var(--ink);
+      font-size: 22px;
+      margin-bottom: 8px;
+    }
+
+    .metric-strip {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .history {
+      margin-top: 22px;
+      border-top: 1px solid var(--line);
+      padding-top: 18px;
+    }
+
+    .history-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .history-head h2 {
+      font-size: 15px;
+      margin: 0;
+    }
+
+    .history-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .history-item {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 10px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .history-title {
+      font-weight: 800;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .history-meta {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .history-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .mini-btn {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      border-radius: 8px;
+      padding: 6px 9px;
+      min-height: 32px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .history-empty {
+      color: var(--muted);
+      border: 1px dashed var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      line-height: 1.6;
+      font-size: 13px;
+    }
+
+    @media (max-width: 980px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar,
+      .main {
+        max-height: none;
+      }
+
+      .span-4,
+      .span-6,
+      .span-8 {
+        grid-column: span 12;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .sidebar,
+      .main {
+        padding: 16px;
+      }
+
+      .row,
+      .metric-strip {
+        grid-template-columns: 1fr;
+      }
+
+      .toolbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="mark">JD</div>
+        <div>
+          <h1>实习岗位 Demo 工作流</h1>
+          <p class="subtitle">把招聘要求转换成 1-3 天可以做出来、能给 HR 展示的项目方案。</p>
+        </div>
+      </div>
+
+      <form id="briefForm">
+        <label for="role">目标岗位</label>
+        <input id="role" placeholder="例如：AI 应用开发实习生 / 全栈工程师实习生">
+
+        <label for="company">公司业务</label>
+        <input id="company" placeholder="例如：招聘 SaaS、教育科技、跨境电商、企业服务">
+
+        <label for="demoType">Demo 类型偏好</label>
+        <select id="demoType">
+          <option value="auto" selected>自动判断</option>
+          <option value="recruiting">AI 招聘匹配</option>
+          <option value="customer">AI 客服质检</option>
+          <option value="education">AI 教育助教</option>
+          <option value="operations">AI 运营洞察</option>
+          <option value="fullstack">全栈项目看板</option>
+          <option value="generic">通用 AI 业务工作台</option>
+        </select>
+
+        <label for="jd">岗位 JD</label>
+        <textarea id="jd" placeholder="粘贴岗位职责和任职要求"></textarea>
+
+        <div class="row">
+          <div>
+            <label for="stack">你的技术栈</label>
+            <input id="stack" placeholder="React, Node.js, Python, LLM API">
+          </div>
+          <div>
+            <label for="timebox">可投入时间</label>
+            <select id="timebox">
+              <option value="24">24 小时</option>
+              <option value="48" selected>48 小时</option>
+              <option value="72">72 小时</option>
+            </select>
+          </div>
+        </div>
+
+        <label for="strength">你已有的优势</label>
+        <textarea id="strength" placeholder="课程、比赛、个人项目、熟悉的框架、可复用代码等"></textarea>
+
+        <div class="actions">
+          <button class="btn" type="submit">生成方案</button>
+          <button class="btn secondary" type="button" id="fillSample">填入示例</button>
+          <button class="btn secondary" type="button" id="clearAll">清空</button>
+        </div>
+      </form>
+
+      <section class="history" aria-label="已保存方案">
+        <div class="history-head">
+          <h2>已保存方案</h2>
+          <button class="mini-btn" type="button" id="clearSavedBriefs">清空列表</button>
+        </div>
+        <div id="savedBriefs" class="history-list">
+          <div class="history-empty">生成方案后点击保存，会在这里保留多个岗位 brief。</div>
+        </div>
+      </section>
+    </aside>
+
+    <main class="main">
+      <div class="toolbar">
+        <div>
+          <h2>Demo 方案输出</h2>
+          <p class="subtitle">输出会覆盖项目定位、MVP、技术栈、构建计划、简历表达和 HR 话术。</p>
+        </div>
+        <div class="actions" style="margin-top: 0;">
+          <button class="btn secondary" type="button" id="copyResult">复制 Markdown</button>
+          <button class="btn secondary" type="button" id="copyCodingPrompt">复制开发提示词</button>
+          <button class="btn secondary" type="button" id="saveBrief">保存方案</button>
+          <button class="btn secondary" type="button" id="downloadMarkdown">下载 Brief</button>
+        </div>
+      </div>
+
+      <section id="output" class="empty">
+        <div>
+          <strong>先粘贴一个目标岗位 JD</strong>
+          <span>生成后，这里会出现一份可以直接执行的求职 demo brief。</span>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const form = document.querySelector("#briefForm");
+    const output = document.querySelector("#output");
+    const copyResult = document.querySelector("#copyResult");
+    const copyCodingPrompt = document.querySelector("#copyCodingPrompt");
+    const saveBrief = document.querySelector("#saveBrief");
+    const downloadMarkdown = document.querySelector("#downloadMarkdown");
+    const fillSample = document.querySelector("#fillSample");
+    const clearAll = document.querySelector("#clearAll");
+    const savedBriefs = document.querySelector("#savedBriefs");
+    const clearSavedBriefs = document.querySelector("#clearSavedBriefs");
+    let lastMarkdown = "";
+    let lastCodingPrompt = "";
+    let lastBriefMeta = null;
+
+    const skillMap = [
+      { keys: ["rag", "知识库", "向量", "检索", "embedding"], tag: "RAG/知识库", evidence: "文档上传、片段检索、引用来源、AI 回答" },
+      { keys: ["agent", "智能体", "工具调用", "function calling"], tag: "Agent/工具调用", evidence: "任务拆解、工具调用、执行日志、结果汇总" },
+      { keys: ["react", "vue", "前端", "typescript", "next"], tag: "前端工程", evidence: "清晰页面、状态管理、表格筛选、响应式交互" },
+      { keys: ["node", "express", "nestjs", "后端", "api"], tag: "后端 API", evidence: "REST API、数据校验、错误处理、接口文档" },
+      { keys: ["python", "fastapi", "flask"], tag: "Python 服务", evidence: "FastAPI 服务、异步任务、AI 请求封装" },
+      { keys: ["数据库", "mysql", "postgres", "sqlite", "sql", "mongodb"], tag: "数据库", evidence: "结构化存储、历史记录、查询筛选" },
+      { keys: ["部署", "docker", "vercel", "云服务器", "ci"], tag: "部署交付", evidence: "在线链接、README、环境变量说明" },
+      { keys: ["数据分析", "图表", "可视化", "指标"], tag: "数据分析", evidence: "指标卡片、趋势图、洞察报告" },
+      { keys: ["简历", "招聘", "hr", "候选人", "面试"], tag: "招聘场景", evidence: "JD 解析、候选人匹配、面试题生成" },
+      { keys: ["客服", "工单", "质检"], tag: "客服场景", evidence: "工单摘要、问题分类、质检评分" },
+      { keys: ["运营", "增长", "活动", "文案"], tag: "运营场景", evidence: "用户反馈聚类、活动文案、投放建议" }
+    ];
+
+    function getValue(id) {
+      return document.querySelector(`#${id}`).value.trim();
+    }
+
+    function normalize(text) {
+      return text.toLowerCase();
+    }
+
+    function unique(items) {
+      return Array.from(new Set(items));
+    }
+
+    function detectSignals(jd, company) {
+      const text = normalize(`${jd} ${company}`);
+      const matches = skillMap.filter(item => item.keys.some(key => text.includes(key.toLowerCase())));
+      if (matches.length) return matches;
+      return [
+        { tag: "AI 应用落地", evidence: "输入、AI 处理、结构化输出、结果解释" },
+        { tag: "全栈闭环", evidence: "前端页面、后端接口、数据记录、可演示部署" },
+        { tag: "业务理解", evidence: "贴近岗位场景的 demo 定位和展示材料" }
+      ];
+    }
+
+    function scenarioByType(type) {
+      const scenarios = {
+        recruiting: {
+          name: "AI JD 分析与候选人匹配助手",
+          user: "HR 或招聘运营",
+          input: "岗位 JD、候选人简历或项目描述",
+          output: "岗位能力标签、匹配评分、风险点、面试问题",
+          core: ["JD 关键词解析", "候选人匹配评分", "面试题生成", "可复制评估报告"]
+        },
+        customer: {
+          name: "AI 客服工单质检与摘要台",
+          user: "客服主管或运营同学",
+          input: "客服对话、工单记录、用户反馈",
+          output: "问题分类、情绪判断、处理建议、质检评分",
+          core: ["工单摘要", "问题自动分类", "质检评分", "改进建议生成"]
+        },
+        education: {
+          name: "AI 学习内容问答与错题讲解助手",
+          user: "学生、老师或教研团队",
+          input: "课程资料、题目、学生提问",
+          output: "知识点解释、解题步骤、学习建议",
+          core: ["资料问答", "错题讲解", "知识点标签", "学习建议生成"]
+        },
+        operations: {
+          name: "AI 用户反馈洞察与运营建议工具",
+          user: "运营或产品同学",
+          input: "用户评论、反馈表、活动数据",
+          output: "反馈聚类、情绪分布、机会点、运营动作建议",
+          core: ["反馈聚类", "情绪分析", "机会点提取", "运营建议生成"]
+        },
+        fullstack: {
+          name: "AI 求职项目管理看板",
+          user: "正在投递实习的学生",
+          input: "目标岗位、demo brief、开发进度和投递反馈",
+          output: "岗位列表、项目状态、投递反馈、数据统计",
+          core: ["岗位管理", "Demo brief 管理", "开发进度看板", "投递反馈统计", "数据概览"]
+        },
+        generic: {
+          name: "AI 业务流程分析工作台",
+          user: "目标岗位所在业务团队",
+          input: "业务文本、表格数据或流程记录",
+          output: "结构化分析结果、优先级建议、可复制报告",
+          core: ["业务输入解析", "AI 结构化分析", "结果可视化", "历史记录与导出"]
+        }
+      };
+      return scenarios[type] || scenarios.generic;
+    }
+
+    function chooseScenario(signals, company, role, preferredType) {
+      if (preferredType && preferredType !== "auto") {
+        return scenarioByType(preferredType);
+      }
+
+      const tags = signals.map(item => item.tag).join(" ");
+      const text = `${tags} ${company} ${role}`;
+
+      if (/招聘|hr|候选人|简历|面试/.test(text)) {
+        return scenarioByType("recruiting");
+      }
+
+      if (/客服|工单|质检/.test(text)) {
+        return scenarioByType("customer");
+      }
+
+      if (/教育|课程|学习|题/.test(text)) {
+        return scenarioByType("education");
+      }
+
+      if (/运营|增长|评论|活动|电商/.test(text)) {
+        return scenarioByType("operations");
+      }
+
+      if (/全栈|后台|管理系统|看板|crud|数据库|接口/i.test(text)) {
+        return scenarioByType("fullstack");
+      }
+
+      return scenarioByType("generic");
+    }
+
+    function buildImplementationDetails(scenario, signalTags) {
+      const key = `${scenario.name} ${scenario.core.join(" ")} ${signalTags.join(" ")}`;
+
+      if (/看板|项目管理|投递|岗位管理|Demo brief/i.test(key)) {
+        return {
+          pages: ["岗位列表页", "Demo brief 编辑页", "开发进度看板", "投递反馈记录页", "数据概览页"],
+          apis: ["GET /api/jobs - 获取岗位列表", "POST /api/jobs - 新增目标岗位", "POST /api/briefs - 保存 demo brief", "PATCH /api/applications/:id - 更新投递状态", "GET /api/stats - 获取投递统计"],
+          entities: ["Job: company, role, jd, status, createdAt", "DemoBrief: jobId, title, positioning, features, techStack, plan", "Application: jobId, channel, message, feedback, nextAction"],
+          prompt: "你是全栈项目规划助手。请根据岗位 JD 生成 demo brief，并把它拆成页面、接口、数据表、开发任务和可展示成果。",
+          showcase: ["展示岗位从待分析到已投递的状态流转", "展示 brief 和投递反馈之间的关联", "强调前端页面、后端 API、数据库设计和数据看板的完整闭环"]
+        };
+      }
+
+      if (/招聘|候选人|简历|面试|JD/i.test(key)) {
+        return {
+          pages: ["岗位 JD 输入页", "候选人/项目材料输入页", "匹配分析结果页", "面试问题与评估报告页", "历史记录页"],
+          apis: ["POST /api/analyze-job - 解析岗位 JD", "POST /api/match-candidate - 生成匹配评分", "POST /api/interview-questions - 生成面试问题", "GET /api/reports - 读取历史报告"],
+          entities: ["Job: company, role, jd, requiredSkills, scenario", "Candidate: name, resumeText, projectText, strengths", "MatchReport: jobId, candidateId, score, gaps, questions, summary"],
+          prompt: "你是招聘场景下的 AI 应用分析助手。请根据岗位 JD 和候选人材料输出能力标签、匹配评分、风险点、补强建议和面试问题，结果必须结构化。",
+          showcase: ["用一个真实 JD 作为示例输入", "展示评分不是绝对结论，而是可解释的能力证据", "准备一段 90 秒演示：JD 输入 -> 匹配报告 -> 面试题 -> HR 话术"]
+        };
+      }
+
+      if (/客服|工单|质检/i.test(key)) {
+        return {
+          pages: ["工单导入页", "质检规则配置页", "AI 分析结果页", "问题分类看板", "改进建议报告页"],
+          apis: ["POST /api/tickets/analyze - 分析客服工单", "GET /api/tickets - 获取工单列表", "POST /api/quality-score - 生成质检评分", "GET /api/insights - 获取问题洞察"],
+          entities: ["Ticket: userMessage, agentReply, channel, createdAt", "QualityReport: ticketId, category, sentiment, score, issues", "Insight: topic, frequency, severity, suggestion"],
+          prompt: "你是客服质检专家。请分析客服对话，输出摘要、问题类型、用户情绪、服务风险、质检评分和可执行改进建议。",
+          showcase: ["准备 5 条模拟客服对话", "展示分类统计和单条质检详情", "强调它能帮助主管节省人工抽检时间"]
+        };
+      }
+
+      if (/学习|课程|错题|教育/i.test(key)) {
+        return {
+          pages: ["学习资料输入页", "提问/错题输入页", "AI 讲解页", "知识点标签页", "学习计划页"],
+          apis: ["POST /api/materials - 保存学习资料", "POST /api/explain - 生成题目讲解", "POST /api/qa - 资料问答", "GET /api/study-plan - 获取学习建议"],
+          entities: ["Material: title, content, subject, tags", "Question: materialId, text, studentAnswer", "Explanation: questionId, steps, keyPoints, mistakes, nextPractice"],
+          prompt: "你是耐心的学习助教。请基于课程资料和题目生成分步骤讲解，指出学生可能的误区，并给出下一步练习建议。",
+          showcase: ["准备一份短课程资料和一道题", "展示分步骤讲解而不是只给答案", "强调教育场景里的可解释性和用户体验"]
+        };
+      }
+
+      if (/运营|增长|评论|反馈|电商/i.test(key)) {
+        return {
+          pages: ["反馈数据导入页", "AI 洞察报告页", "情绪/主题看板", "运营建议页", "导出报告页"],
+          apis: ["POST /api/feedback/analyze - 分析用户反馈", "GET /api/topics - 获取主题聚类", "GET /api/dashboard - 获取统计指标", "POST /api/report - 生成运营报告"],
+          entities: ["Feedback: source, content, rating, createdAt", "Topic: name, keywords, count, sentiment", "OperationSuggestion: topicId, action, priority, expectedImpact"],
+          prompt: "你是运营分析助手。请从用户反馈中提取主题、情绪、痛点和机会点，并按优先级输出可执行运营建议。",
+          showcase: ["准备 20 条模拟评论或反馈", "展示主题聚类和优先级建议", "强调从文本到行动建议的闭环"]
+        };
+      }
+
+      return {
+        pages: ["业务输入页", "AI 分析工作台", "结构化结果页", "历史记录页", "导出报告页"],
+        apis: ["POST /api/analyze - 生成结构化分析", "GET /api/records - 获取历史记录", "GET /api/records/:id - 查看详情", "POST /api/export - 导出报告"],
+        entities: ["InputRecord: title, rawText, source, createdAt", "AnalysisResult: recordId, summary, tags, score, suggestions", "ExportReport: resultId, format, content"],
+        prompt: "你是业务流程分析助手。请把用户输入的业务材料转换成摘要、标签、风险点、优先级和下一步行动建议。",
+        showcase: ["准备一个贴近目标公司的业务输入", "展示结构化输出和可复制报告", "强调完整产品闭环而不是单次聊天"]
+      };
+    }
+
+    function buildPlan(hours) {
+      if (hours === "24") {
+        return [
+          "0-2 小时：锁定岗位关键词，写出一句话定位和 3 个核心功能。",
+          "2-8 小时：完成页面骨架、示例数据、核心输入输出。",
+          "8-16 小时：接入 AI 处理或 mock AI 结果，补齐结果解释和复制功能。",
+          "16-22 小时：优化 UI、写 README、准备截图和演示脚本。",
+          "22-24 小时：生成简历 bullet 和 HR 话术，开始投递。"
+        ];
+      }
+
+      if (hours === "72") {
+        return [
+          "0-4 小时：深读 JD 和公司业务，确定 demo 场景、数据结构和技术方案。",
+          "4-16 小时：搭建前后端、数据库和基础页面。",
+          "16-36 小时：实现 AI 核心流程、历史记录、结果导出和错误状态。",
+          "36-54 小时：加入图表、筛选、示例数据、权限或部署等工程亮点。",
+          "54-66 小时：部署在线版本，完善 README、截图和演示脚本。",
+          "66-72 小时：针对目标岗位改写简历项目和 HR 消息。"
+        ];
+      }
+
+      return [
+        "0-2 小时：拆 JD，确定需要证明的 3 个能力信号。",
+        "2-8 小时：搭建项目骨架，完成页面和 API 的主流程。",
+        "8-18 小时：实现 AI 处理、结构化输出、loading 和错误状态。",
+        "18-30 小时：增加历史记录、导出、示例数据和产品细节。",
+        "30-40 小时：部署或录屏，补 README、截图和演示脚本。",
+        "40-48 小时：生成简历 bullet 和 HR 话术，开始定向沟通。"
+      ];
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function renderList(items) {
+      return items.map(item => `<li>${escapeHtml(item)}</li>`).join("");
+    }
+
+    function markdownList(items) {
+      return items.map(item => `- ${item}`).join("\n");
+    }
+
+    function readSavedBriefs() {
+      try {
+        return JSON.parse(localStorage.getItem("demoWorkflowSavedBriefs") || "[]");
+      } catch (error) {
+        return [];
+      }
+    }
+
+    function writeSavedBriefs(items) {
+      localStorage.setItem("demoWorkflowSavedBriefs", JSON.stringify(items));
+    }
+
+    function formatDate(value) {
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return "";
+      return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")} ${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
+    }
+
+    function renderSavedBriefs() {
+      const items = readSavedBriefs();
+      if (!items.length) {
+        savedBriefs.innerHTML = '<div class="history-empty">生成方案后点击保存，会在这里保留多个岗位 brief。</div>';
+        return;
+      }
+
+      savedBriefs.innerHTML = items.map(item => `
+        <article class="history-item" data-brief-id="${escapeHtml(item.id)}">
+          <div class="history-title">${escapeHtml(item.title)}</div>
+          <div class="history-meta">${escapeHtml(item.role)} · ${escapeHtml(item.company)} · ${escapeHtml(formatDate(item.createdAt))}</div>
+          <div class="history-actions">
+            <button class="mini-btn" type="button" data-action="load" data-id="${escapeHtml(item.id)}">查看</button>
+            <button class="mini-btn" type="button" data-action="copy" data-id="${escapeHtml(item.id)}">复制</button>
+            <button class="mini-btn" type="button" data-action="delete" data-id="${escapeHtml(item.id)}">删除</button>
+          </div>
+        </article>
+      `).join("");
+    }
+
+    function showMarkdownBrief(item) {
+      lastMarkdown = item.markdown;
+      lastCodingPrompt = item.codingPrompt || "";
+      lastBriefMeta = {
+        title: item.title,
+        role: item.role,
+        company: item.company
+      };
+      output.className = "grid";
+      output.innerHTML = `
+        <article class="card span-12 highlight">
+          <h3>${escapeHtml(item.title)}</h3>
+          <pre>${escapeHtml(item.markdown)}</pre>
+        </article>
+      `;
+    }
+
+    function buildMarkdown(data) {
+      return `# ${data.scenario.name}
+
+## 项目定位
+
+${data.positioning}
+
+## 岗位能力信号
+
+${markdownList(data.signalTags)}
+
+## 证明方式
+
+${markdownList(data.evidence)}
+
+## MVP 功能
+
+${markdownList(data.scenario.core)}
+
+## 建议技术栈
+
+${markdownList(data.stackItems)}
+
+## 页面结构
+
+${markdownList(data.details.pages)}
+
+## API 草图
+
+${markdownList(data.details.apis)}
+
+## 数据结构
+
+${markdownList(data.details.entities)}
+
+## AI Prompt 方向
+
+${data.details.prompt}
+
+## 给 AI 编程助手的开发提示词
+
+${data.codingPrompt || ""}
+
+## ${data.timebox} 小时构建计划
+
+${data.plan.map((item, index) => `${index + 1}. ${item}`).join("\n")}
+
+## 展示检查清单
+
+${markdownList(data.details.showcase)}
+
+## 我的优势
+
+${data.strength}
+
+## 简历 bullet
+
+${data.resume}
+
+## HR 开场消息
+
+${data.hr}
+`;
+    }
+
+    function buildCodingPrompt(data) {
+      return `请帮我开发一个用于求职展示的最小可用 demo：${data.scenario.name}。
+
+背景：
+- 目标岗位：${data.role}
+- 公司/业务：${data.company}
+- 目标用户：${data.scenario.user}
+- 项目定位：${data.positioning}
+
+功能范围：
+${markdownList(data.scenario.core)}
+
+页面结构：
+${markdownList(data.details.pages)}
+
+API 草图：
+${markdownList(data.details.apis)}
+
+数据结构：
+${markdownList(data.details.entities)}
+
+技术栈：
+${markdownList(data.stackItems)}
+
+AI 行为：
+- ${data.details.prompt}
+- 如果暂时没有 API key，先用 mock AI 输出跑通完整流程。
+- 如果接入 LLM API，必须通过后端或 serverless route 读取环境变量，不要把 key 写进前端代码。
+- 请提供 .env.example，并说明需要配置哪些变量。
+
+交付要求：
+- 做出可本地运行的完整主流程。
+- 保留 1-3 天 demo 的范围，不要扩成大型平台。
+- 加入示例数据、空状态、loading 状态和错误状态。
+- 写 README，说明运行方式、功能、技术栈和演示步骤。
+- 最后给出适合写进简历的 bullet 和发给 HR 的短消息。`;
+    }
+
+    function generate(event) {
+      event.preventDefault();
+
+      const role = getValue("role") || "AI 应用/全栈工程师实习生";
+      const company = getValue("company") || "目标公司业务";
+      const jd = getValue("jd");
+      const stack = getValue("stack") || "React / Node.js / Python / LLM API";
+      const strength = getValue("strength") || "学习能力强，能快速完成小型产品闭环";
+      const timebox = getValue("timebox");
+      const demoType = getValue("demoType");
+
+      const signals = detectSignals(jd, company);
+      const scenario = chooseScenario(signals, company, role, demoType);
+      const signalTags = unique(signals.map(item => item.tag));
+      const evidence = unique(signals.map(item => item.evidence));
+      const plan = buildPlan(timebox);
+      const stackItems = stack.split(/[,，、/]/).map(item => item.trim()).filter(Boolean);
+      const details = buildImplementationDetails(scenario, signalTags);
+
+      const positioning = `面向${scenario.user}的${scenario.name}，输入${scenario.input}，输出${scenario.output}，用于证明我能把 ${signalTags.slice(0, 3).join("、")} 落到一个可操作的产品闭环里。`;
+      const resume = `面向${company}相关业务场景独立开发${scenario.name}，支持${scenario.core.slice(0, 3).join("、")}；使用${stack}完成前端交互、后端接口、AI 能力接入与展示材料沉淀，用于针对${role}展示 AI 应用落地和全栈开发能力。`;
+      const hr = `您好，我是大二学生，正在找 AI 应用/全栈方向实习。我认真看了${role}对${signalTags.slice(0, 3).join("、")}的要求，所以准备做一个「${scenario.name}」demo，包含${scenario.core.slice(0, 3).join("、")}，想用可演示项目更具体地展示我的开发能力。方便的话想争取一次沟通机会。`;
+      const result = { scenario, positioning, signalTags, evidence, stackItems: stackItems.length ? stackItems : ["React", "Node.js", "LLM API"], details, plan, strength, resume, hr, timebox, role, company };
+      result.codingPrompt = buildCodingPrompt(result);
+      lastMarkdown = buildMarkdown(result);
+      lastCodingPrompt = result.codingPrompt;
+      lastBriefMeta = {
+        title: scenario.name,
+        role,
+        company
+      };
+
+      output.className = "grid";
+      output.innerHTML = `
+        <div class="metric-strip span-12">
+          <div class="card kpi">
+            <strong>${signalTags.length}</strong>
+            <span>识别到的能力信号</span>
+          </div>
+          <div class="card kpi">
+            <strong>${scenario.core.length}</strong>
+            <span>MVP 核心功能</span>
+          </div>
+          <div class="card kpi">
+            <strong>${timebox}h</strong>
+            <span>建议交付窗口</span>
+          </div>
+        </div>
+
+        <article class="card span-8 highlight">
+          <h3>项目定位</h3>
+          <pre>${escapeHtml(positioning)}</pre>
+        </article>
+
+        <article class="card span-4 blue">
+          <h3>推荐项目名</h3>
+          <pre>${escapeHtml(scenario.name)}</pre>
+        </article>
+
+        <article class="card span-6">
+          <h3>岗位能力信号</h3>
+          <ul class="pill-list">${renderList(signalTags)}</ul>
+        </article>
+
+        <article class="card span-6">
+          <h3>证明方式</h3>
+          <ul class="plain-list">${renderList(evidence)}</ul>
+        </article>
+
+        <article class="card span-6">
+          <h3>MVP 功能</h3>
+          <ul class="plain-list">${renderList(scenario.core)}</ul>
+        </article>
+
+        <article class="card span-6">
+          <h3>建议技术栈</h3>
+          <ul class="plain-list">${renderList(result.stackItems)}</ul>
+        </article>
+
+        <article class="card span-6">
+          <h3>页面结构</h3>
+          <ul class="plain-list">${renderList(details.pages)}</ul>
+        </article>
+
+        <article class="card span-6">
+          <h3>API 草图</h3>
+          <ul class="plain-list">${renderList(details.apis)}</ul>
+        </article>
+
+        <article class="card span-6">
+          <h3>数据结构</h3>
+          <ul class="plain-list">${renderList(details.entities)}</ul>
+        </article>
+
+        <article class="card span-6">
+          <h3>AI Prompt 方向</h3>
+          <pre>${escapeHtml(details.prompt)}</pre>
+        </article>
+
+        <article class="card span-12 highlight">
+          <h3>给 AI 编程助手的开发提示词</h3>
+          <pre>${escapeHtml(result.codingPrompt)}</pre>
+        </article>
+
+        <article class="card span-12">
+          <h3>${timebox} 小时构建计划</h3>
+          <ol class="steps">${renderList(plan)}</ol>
+        </article>
+
+        <article class="card span-12 blue">
+          <h3>展示检查清单</h3>
+          <ul class="plain-list">${renderList(details.showcase)}</ul>
+        </article>
+
+        <article class="card span-6">
+          <h3>你的优势如何嵌进去</h3>
+          <pre>${escapeHtml(strength)}</pre>
+        </article>
+
+        <article class="card span-6">
+          <h3>简历 bullet</h3>
+          <pre>${escapeHtml(resume)}</pre>
+        </article>
+
+        <article class="card span-12">
+          <h3>HR 开场消息</h3>
+          <pre>${escapeHtml(hr)}</pre>
+        </article>
+      `;
+
+      localStorage.setItem("demoWorkflowForm", JSON.stringify({ role, company, jd, stack, strength, timebox, demoType }));
+    }
+
+    fillSample.addEventListener("click", () => {
+      document.querySelector("#role").value = "AI 应用开发实习生";
+      document.querySelector("#company").value = "企业招聘 SaaS / HRTech";
+      document.querySelector("#demoType").value = "recruiting";
+      document.querySelector("#jd").value = "岗位职责：参与 AI 应用产品开发，负责前后端功能实现，接入大模型能力，支持知识库/RAG、简历解析、候选人匹配等场景。任职要求：熟悉 React 或 Vue，了解 Node.js/Python，熟悉 LLM API，有产品意识和快速学习能力，有部署经验优先。";
+      document.querySelector("#stack").value = "React, Node.js, SQLite, LLM API, Vercel";
+      document.querySelector("#timebox").value = "48";
+      document.querySelector("#strength").value = "做过课程项目，熟悉 React 基础，能快速学习 API 接入，希望用小型完整产品证明全栈闭环能力。";
+    });
+
+    clearAll.addEventListener("click", () => {
+      form.reset();
+      localStorage.removeItem("demoWorkflowForm");
+      lastMarkdown = "";
+      lastCodingPrompt = "";
+      lastBriefMeta = null;
+      output.className = "empty";
+      output.innerHTML = "<div><strong>先粘贴一个目标岗位 JD</strong><span>生成后，这里会出现一份可以直接执行的求职 demo brief。</span></div>";
+    });
+
+    copyResult.addEventListener("click", async () => {
+      const text = lastMarkdown || output.innerText.trim();
+      if (!text) return;
+      await navigator.clipboard.writeText(text);
+      copyResult.textContent = "已复制";
+      setTimeout(() => {
+        copyResult.textContent = "复制 Markdown";
+      }, 1200);
+    });
+
+    copyCodingPrompt.addEventListener("click", async () => {
+      if (!lastCodingPrompt) return;
+      await navigator.clipboard.writeText(lastCodingPrompt);
+      copyCodingPrompt.textContent = "已复制";
+      setTimeout(() => {
+        copyCodingPrompt.textContent = "复制开发提示词";
+      }, 1200);
+    });
+
+    saveBrief.addEventListener("click", () => {
+      if (!lastMarkdown || !lastBriefMeta) return;
+      const items = readSavedBriefs();
+      const item = {
+        id: String(Date.now()),
+        title: lastBriefMeta.title,
+        role: lastBriefMeta.role,
+        company: lastBriefMeta.company,
+        createdAt: new Date().toISOString(),
+        markdown: lastMarkdown,
+        codingPrompt: lastCodingPrompt
+      };
+      writeSavedBriefs([item, ...items].slice(0, 20));
+      renderSavedBriefs();
+      saveBrief.textContent = "已保存";
+      setTimeout(() => {
+        saveBrief.textContent = "保存方案";
+      }, 1200);
+    });
+
+    savedBriefs.addEventListener("click", async (event) => {
+      const button = event.target.closest("button[data-action]");
+      if (!button) return;
+      const action = button.dataset.action;
+      const id = button.dataset.id;
+      const items = readSavedBriefs();
+      const item = items.find(entry => entry.id === id);
+      if (!item) return;
+
+      if (action === "load") {
+        showMarkdownBrief(item);
+      }
+
+      if (action === "copy") {
+        await navigator.clipboard.writeText(item.markdown);
+        button.textContent = "已复制";
+        setTimeout(() => {
+          button.textContent = "复制";
+        }, 1200);
+      }
+
+      if (action === "delete") {
+        writeSavedBriefs(items.filter(entry => entry.id !== id));
+        renderSavedBriefs();
+      }
+    });
+
+    clearSavedBriefs.addEventListener("click", () => {
+      writeSavedBriefs([]);
+      renderSavedBriefs();
+    });
+
+    downloadMarkdown.addEventListener("click", () => {
+      const text = lastMarkdown || output.innerText.trim();
+      if (!text) return;
+      const blob = new Blob([text], { type: "text/markdown;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "demo-brief.md";
+      link.click();
+      URL.revokeObjectURL(url);
+    });
+
+    const saved = localStorage.getItem("demoWorkflowForm");
+    if (saved) {
+      const data = JSON.parse(saved);
+      Object.entries(data).forEach(([key, value]) => {
+        const field = document.querySelector(`#${key}`);
+        if (field) field.value = value;
+      });
+    }
+
+    renderSavedBriefs();
+    form.addEventListener("submit", generate);
+  </script>
+</body>
+</html>
