@@ -1,8 +1,12 @@
 # Output Format
 
-Use this structure for the final brief. The output should prove that the project is chosen from both recruitment demand and applicant situation.
+Use this structure when producing route comparison and project-generation outputs.
 
-## Recruitment Demand Understanding
+## Before Route Confirmation
+
+The output should help the user choose, not overwhelm them with a finished implementation plan.
+
+### 1. Recruitment Demand Understanding
 
 - Target role:
 - Company/business:
@@ -12,7 +16,7 @@ Use this structure for the final brief. The output should prove that the project
 - P1 differentiators:
 - Best proof artifacts:
 
-## Applicant Fit and Gap
+### 2. Applicant Fit and Gap
 
 - Existing strengths:
 - Missing proof:
@@ -21,39 +25,81 @@ Use this structure for the final brief. The output should prove that the project
 - What the demo must prove:
 - What should be mocked or scoped down:
 
-## Positioning
+### 3. Three Project Routes
 
+For each route, use this structure:
+
+```text
+Route A/B/C:
+- Route type:
 - Project name:
-- One sentence: For [user], this [product type] helps [task] by producing [result].
+- One sentence:
+- Product logic:
+- Core user flow:
 - Why it matches the JD:
-
-## Ability Signals
-
-Table columns:
-
-- JD requirement
-- Ability signal
-- Demo proof
-- Priority
-
-## MVP
-
-- Core flow:
-- Features:
+- Recommended tech stack:
+- MVP features:
 - Non-goals:
-- 24/48/72 hour plan:
+- Estimated time:
+- Main risk:
+- Downgrade plan:
+- Resume angle:
+- HR/BOSS angle:
+```
 
-## Engineering Plan
+The three route types should usually be:
+
+- Fastest viable build
+- Strongest job match
+- Strongest technical showcase
+
+### 4. Route Comparison
+
+Use a compact table:
+
+- route
+- job match
+- build speed
+- technical depth
+- user explainability
+- risk
+
+### 5. Recommendation
+
+Recommend one route and explain why.
+
+End by asking the user to confirm:
+
+```text
+你可以选择路线 A/B/C，或者说“把 A 的范围和 B 的业务场景合并”。确认后我会直接进入项目生成阶段。
+```
+
+## After Route Confirmation
+
+When the user confirms a route, produce the implementation-ready output.
+
+### 1. Confirmed Project
+
+- Selected route:
+- Project name:
+- One-sentence positioning:
+- Target user:
+- Core workflow:
+- Scope boundaries:
+
+### 2. Engineering Plan
 
 - Pages:
 - API endpoints:
 - Data entities:
 - AI prompt direction:
+- Mock mode:
+- Environment variables:
 - Deployment plan:
 
-## Codex Project Prompt
+### 3. Codex Build Prompt
 
-Produce a self-contained prompt that the user can paste into a fresh Codex thread. It must include job facts, applicant context, recruitment-demand reasoning, scope limits, API-key rules, mock mode, and acceptance criteria.
+Produce a self-contained prompt that the user can paste into a fresh Codex thread if the current session is not directly building the project.
 
 ```text
 Build a small demo app for [project name].
@@ -64,6 +110,7 @@ Context:
 - User:
 - Applicant strengths:
 - Applicant gaps:
+- Confirmed route:
 - Core problem:
 - Role ability signals to prove:
 
@@ -77,6 +124,7 @@ Requirements:
 
 Tech stack:
 - [stack]
+- Explain why this stack fits the user's skills, timeline, and role.
 
 AI behavior:
 - [prompt direction]
@@ -88,11 +136,13 @@ Deliverables:
 - README
 - .env.example
 - Demo data
+- Acceptance criteria
 - Resume bullet
 - HR message
+- 90-second demo script
 ```
 
-## Resume Bullet
+### 4. Resume Bullet
 
 Formula:
 
@@ -100,10 +150,10 @@ Formula:
 Built [project] for [scenario], supporting [feature 1], [feature 2], and [feature 3]; used [stack] to complete [frontend/backend/AI/data/deployment] workflow and demonstrate [target ability].
 ```
 
-## HR Message
+### 5. HR Message
 
 Keep it short:
 
 ```text
-您好，我是大二学生，正在找 [方向] 实习。我看了岗位里对 [能力] 的要求，所以做了一个 [项目名] demo，包含 [核心功能]，想用可演示项目更具体地展示我的开发能力。方便的话想争取一次沟通机会。
+您好，我是[身份]，正在找[方向]实习。我看了岗位里对[能力]的要求，所以做了一个[项目名] demo，包含[核心功能]。这个项目是根据岗位场景设计的，想用可演示作品更具体地展示我的开发能力。方便的话希望争取一次沟通机会。
 ```

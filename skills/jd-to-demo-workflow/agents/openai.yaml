@@ -1,4 +1,4 @@
 interface:
   display_name: "JD to Demo Workflow"
-  short_description: "Analyze job screenshots and generate Codex project prompts"
-  default_prompt: "Use $jd-to-demo-workflow to analyze this internship job screenshot, combine it with my background, and generate a complete Codex project prompt."
+  short_description: "Compare three job-matched project routes, then build the selected demo"
+  default_prompt: "Use $jd-to-demo-workflow to analyze this internship job screenshot and my background. First propose three project routes with different tradeoffs. Wait for my confirmation before generating the selected project."

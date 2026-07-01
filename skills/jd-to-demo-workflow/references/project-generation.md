@@ -1,6 +1,6 @@
 # Project Generation
 
-Use this reference to turn job/applicant matching into a fast buildable project.
+Use this reference to turn job/applicant matching into three selectable project routes, then generate the selected project after confirmation.
 
 ## Inputs to consider
 
@@ -11,16 +11,49 @@ Use this reference to turn job/applicant matching into a fast buildable project.
 - applicant's missing proof
 - available time: 24h, 48h, 72h, or unknown
 - desired positioning: AI application, full-stack, frontend, backend, data, product-minded engineer
+- user preference: fastest viable build, strongest job match, strongest technical showcase, or undecided
 
-## Project selection rule
+## Route selection rule
 
-Choose the project that maximizes:
+Before the user confirms a direction, propose three routes:
+
+1. Fastest viable build
+2. Strongest job match
+3. Strongest technical showcase
+
+Each route must be meaningfully different. Compare them by:
 
 ```text
-job relevance + visible proof + buildability
+job relevance + visible proof + buildability + technical depth + user explainability
 ```
 
-Do not choose the most impressive-sounding project if it cannot be completed.
+Do not choose the most impressive-sounding project if it cannot be completed or explained by the applicant.
+
+## Required route fields
+
+For each route, return:
+
+- route name
+- project name
+- one-sentence positioning
+- target user
+- core product logic
+- core user flow
+- job requirements it proves
+- recommended tech stack and why
+- must-have features
+- non-goals
+- pages
+- API endpoints
+- data entities
+- AI behavior/prompt direction
+- mock mode
+- environment variables
+- time estimate
+- implementation risk
+- downgrade plan
+- resume angle
+- HR/BOSS message angle
 
 ## Time-boxed scope
 
@@ -32,7 +65,7 @@ Use:
 - mock AI output
 - one core workflow
 - example data
-- README + screenshots + HR message
+- README + HR message
 
 Avoid:
 
@@ -61,30 +94,24 @@ Use:
 - better error states
 - richer sample data
 
-## Required project brief
+## Confirmation behavior
 
-Return:
+If no route is confirmed:
 
-- project name
-- one-sentence positioning
-- target user
-- core input
-- core output
-- must-have features
-- non-goals
-- pages
-- API endpoints
-- data entities
-- AI behavior/prompt direction
-- mock mode
-- environment variables
-- acceptance criteria
-- resume bullet
-- HR/BOSS message
+- recommend one route
+- explain why it fits the applicant
+- ask the user to confirm route A/B/C or request a hybrid
+- do not generate full project code yet
+
+If a route is confirmed:
+
+- generate the selected project directly when working in an implementation workspace
+- otherwise generate a complete Codex-ready build prompt
+- include README, mock data, `.env.example`, acceptance criteria, resume bullet, HR/BOSS message, and demo script
 
 ## Scope guardrail
 
-If the user asks for a project that is too big, preserve the job relevance but reduce scope.
+If the user asks for a project that is too big, preserve job relevance but reduce scope.
 
 Example:
 
@@ -94,5 +121,6 @@ Instead of building a full recruiting platform, build an AI JD analysis and cand
 
 ## Output emphasis
 
-The final Codex project prompt should be the most complete artifact. It must be directly pasteable into a new Codex thread.
+Before confirmation, the three-route comparison is the most important artifact.
 
+After confirmation, the generated project or final Codex build prompt is the most important artifact. It must be directly usable by Codex without re-explaining the job.

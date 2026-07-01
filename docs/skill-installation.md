@@ -26,7 +26,8 @@ Copy-Item -Path ".\skills\jd-to-demo-workflow" -Destination "$env:USERPROFILE\.c
 安装后，在新线程里可以这样调用：
 
 ```text
-Use $jd-to-demo-workflow to analyze this internship job screenshot, combine it with my background, and generate a complete Codex project prompt.
+Use $jd-to-demo-workflow to analyze this internship job screenshot and my background.
+First propose three project routes with different tradeoffs. Wait for my confirmation before generating the selected project.
 ```
 
 ## 从本机安装版同步回仓库
@@ -50,4 +51,3 @@ python "$env:USERPROFILE\.codex\skills\.system\skill-creator\scripts\quick_valid
 ```text
 Skill is valid!
 ```
-
